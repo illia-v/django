@@ -153,13 +153,10 @@ class HttpResponseBase:
 
     def serialize_headers(self):
         """HTTP headers as a bytestring."""
-        def to_bytes(val, encoding):
-            return val if isinstance(val, bytes) else val.encode(encoding)
-
-        headers = [
-            (to_bytes(key, 'ascii') + b': ' + to_bytes(value, 'latin-1'))
+        headers = (
+            (key.encode("ascii") + b': ' + value.encode("latin-1"))
             for key, value in self.headers.items()
-        ]
+        )
         return b'\r\n'.join(headers)
 
     __bytes__ = serialize_headers
