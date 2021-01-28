@@ -1,5 +1,5 @@
 import copy
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 
 
 class OrderedSet:
@@ -286,7 +286,7 @@ def _destruct_iterable_mapping_values(data):
             )
         if not isinstance(elem[0], str):
             raise ValueError('Element key %r invalid, only strings are allowed' % elem[0])
-        yield tuple(elem)
+        yield elem if isinstance(elem, Iterable) else tuple(elem)
 
 
 class CaseInsensitiveMapping(Mapping):
@@ -308,9 +308,11 @@ class CaseInsensitiveMapping(Mapping):
     """
 
     def __init__(self, data):
-        if not isinstance(data, Mapping):
-            data = {k: v for k, v in _destruct_iterable_mapping_values(data)}
-        self._store = {k.lower(): (k, v) for k, v in data.items()}
+        if isinstance(data, Mapping):
+            data_items = data.items()
+        else:
+            data_items = _destruct_iterable_mapping_values(data)
+        self._store = {k.lower(): (k, v) for k, v in data_items}
 
     def __getitem__(self, key):
         return self._store[key.lower()][1]

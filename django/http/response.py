@@ -32,10 +32,12 @@ class ResponseHeaders(CaseInsensitiveMapping):
         Populate the initial data using __setitem__ to ensure values are
         correctly encoded.
         """
-        if not isinstance(data, Mapping):
-            data = {k: v for k, v in _destruct_iterable_mapping_values(data)}
+        if isinstance(data, Mapping):
+            data_items = data.items()
+        else:
+            data_items = _destruct_iterable_mapping_values(data)
         self._store = {}
-        for header, value in data.items():
+        for header, value in data_items:
             self[header] = value
 
     def _convert_to_charset(self, value, charset, mime_encode=False):

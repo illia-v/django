@@ -275,6 +275,12 @@ class CaseInsensitiveMappingTests(SimpleTestCase):
         with self.assertRaisesMessage(ValueError, msg):
             CaseInsensitiveMapping([(1, '2')])
 
+    def test_create_with_not_mappings(self):
+        data = {'Accept': 'application/json'}
+        for iterable in (tuple, list, ImmutableList):
+            mapping = CaseInsensitiveMapping(map(iterable, data.items()))
+            self.assertEqual(mapping, data)
+
     def test_list(self):
         self.assertEqual(list(self.dict1), ['Accept', 'content-type'])
 
